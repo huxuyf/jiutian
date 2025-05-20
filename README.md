@@ -35,7 +35,7 @@ yarn install
 
 在项目根目录创建 `.env` 文件，并设置以下环境变量：
 
-```
+```markdown
 # 九天大模型 API Key
 JIUTIAN_API_KEY=your_api_key_here
 
@@ -54,7 +54,7 @@ node app.js
 
 服务启动后，将在控制台输出以下信息：
 
-```
+```markdown
 服务已启动: http://localhost:3000
 健康检查: http://localhost:3000/health
 问答接口: http://localhost:3000/api/completions
@@ -118,7 +118,7 @@ node app.js
 
 **流式返回示例**：
 
-```
+```json
 data: {
   "created": 1725502748,
   "model": "jiutian-lan",

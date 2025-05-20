@@ -1,0 +1,29 @@
+{
+  "name": "jiutian",
+  "version": "1.0.0",
+  "description": "jiutian api local service",
+  "keywords": [
+    "jiutianai"
+  ],
+  "homepage": "https://github.com/huxuyf/jiutian#readme",
+  "bugs": {
+    "url": "https://github.com/huxuyf/jiutian/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huxuyf/jiutian.git"
+  },
+  "license": "ISC",
+  "author": "huxuyf",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
