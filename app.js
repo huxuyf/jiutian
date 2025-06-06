@@ -8,12 +8,16 @@
 
 const express = require("express");
 const axios = require("axios");
+const cors = require('cors');
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 // 创建 Express 应用
 const app = express();
 app.use(express.json());
+
+// 启用 CORS
+app.use(cors());
 
 // 端口配置
 const PORT = process.env.PORT || 3000;
@@ -58,17 +62,41 @@ function loggerMiddleware(req, res, next) {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] ${req.method} ${req.url}`);
   
-  // 记录请求体（排除敏感信息）
-  const requestBody = { ...req.body };
-  delete requestBody.apiKey; // 排除敏感信息
+  // 安全处理请求体记录
+  const requestBody = req.body ? { ...req.body } : {};
+  delete requestBody.apiKey;
   console.log(`请求体: ${JSON.stringify(requestBody)}`);
   
   // 记录响应
   const originalSend = res.send;
   res.send = function(body) {
-    if (!req.body.stream) { // 非流式响应才记录
-      console.log(`响应: ${body.substring(0, 200)}${body.length > 200 ? '...' : ''}`);
+    // 安全检查：确保 req.body 存在再检查 stream
+    const isStreaming = req.body && req.body.stream;
+    
+    if (!isStreaming) {
+      let bodyStr = "";
+      
+      // 处理不同类型的响应体
+      if (typeof body === "string") {
+        bodyStr = body;
+      } else if (Buffer.isBuffer(body)) {
+        bodyStr = "<Buffer>";
+      } else {
+        try {
+          bodyStr = JSON.stringify(body);
+        } catch {
+          bodyStr = "[Non-serializable Body]";
+        }
+      }
+      
+      // 安全截断（防止大响应体问题）
+      const truncated = bodyStr.length > 2000 
+        ? bodyStr.substring(0, 200) + "..." 
+        : bodyStr;
+      
+      console.log(`响应: ${truncated}`);
     }
+    
     return originalSend.call(this, body);
   };
   
@@ -187,7 +215,7 @@ app.post("/api/chat", async (req, res) => {
         }
       }
     );
-    
+
     // 返回结果
     res.json(result.data);
   } catch (error) {
